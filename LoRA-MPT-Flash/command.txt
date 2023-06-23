@@ -1,0 +1,11 @@
+python src/finetune.py --base_model 'mosaicml/mpt-7b-instruct' --data_path 'yahma/alpaca-cleaned' --output_dir './lora-mpt' --lora_target_modules '[Wqkv]' --lora_r 8 --cutoff_len 768 --batch_size 128 --micro_batch_size 8
+#lightweight version for quick testing purposes 
+python src/finetune.py --base_model 'mosaicml/mpt-7b-instruct' --data_path 'yahma/alpaca-cleaned' --output_dir './lora-mpt' --lora_target_modules '[Wqkv]' --lora_r 8 --cutoff_len 64 --batch_size 4 --micro_batch_size 4
+
+#Note: substitute deepspeed for python for multi-gpu systems. 
+
+python src/generate.py --load_8bit --base_model 'mosaicml/mpt-7b-instruct' --lora_weights 'lora-mpt'
+
+#Evaluation
+python src/eval.py --model mpt-causal --model_args pretrained=mosaicml/mpt-7b,trust_remote_code=True,load_in_8bit=True,peft=lora-mpt --tasks arithmetic_2da
+
